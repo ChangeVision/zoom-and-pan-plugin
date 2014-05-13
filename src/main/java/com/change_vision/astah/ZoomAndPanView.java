@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.geom.Point2D;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -28,6 +29,7 @@ public class ZoomAndPanView extends JPanel implements IPluginExtraTabView, Proje
     private static final long serialVersionUID = 1L;
 
     JSlider slider;
+    JLabel zoomFactor;
 
     public ZoomAndPanView() {
         initComponents();
@@ -52,6 +54,7 @@ public class ZoomAndPanView extends JPanel implements IPluginExtraTabView, Proje
     private Container createLabelPane() {
         int minPercentage = 5;
         int maxPercentage = 400;
+        zoomFactor = new JLabel("Zoom Factor :    ");
         slider = new JSlider(minPercentage, maxPercentage);
         slider.addChangeListener(new ChangeListener() {
             @Override
@@ -75,6 +78,7 @@ public class ZoomAndPanView extends JPanel implements IPluginExtraTabView, Proje
                     return;
                 }
                 diagramViewManager.zoom(zoomValue, true);
+                zoomFactor.setText("Zoom Factor : " + Double.toString(diagramViewManager.getZoomFactor()));
                 IPresentation[] selectedPresentations = diagramViewManager
                         .getSelectedPresentations();
                 for (IPresentation presentation : selectedPresentations) {
@@ -96,7 +100,15 @@ public class ZoomAndPanView extends JPanel implements IPluginExtraTabView, Proje
         });
 
         JPanel p = new JPanel();
-        p.add(slider);
+        p.setLayout(new BorderLayout());
+        //zoom factor
+        JPanel zoomFactorPanel = new JPanel();
+        zoomFactorPanel.add(zoomFactor);
+        p.add(zoomFactorPanel, BorderLayout.NORTH);
+        //slider
+        JPanel sliderPanel = new JPanel();
+        sliderPanel.add(slider);
+        p.add(sliderPanel, BorderLayout.CENTER);
         return new JScrollPane(p);
     }
 
